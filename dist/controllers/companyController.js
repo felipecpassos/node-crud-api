@@ -167,15 +167,6 @@ class CompanyController {
                             });
                         }
                     });
-                    // this.company_service.deleteCompany(req.params.id, (err: any, delete_details) => {
-                    //     if (err) {
-                    //         mongoError(err, res);
-                    //     } else if (delete_details.deletedCount !== 0) {
-                    //         successResponse('delete company successfull', null, res);
-                    //     } else {
-                    //         failureResponse('invalid company', null, res);
-                    //     }
-                    // });
                 }
             });
         }
