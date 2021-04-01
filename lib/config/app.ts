@@ -1,4 +1,5 @@
 import env from "../environment";
+import mongoDbUrl from "../../global";
 import * as express from "express";
 import * as bodyParser from "body-parser";
 import * as mongoose from 'mongoose';
@@ -6,13 +7,14 @@ import { TestRoutes } from "../routes/test_routes";
 import { CommonRoutes } from "../routes/common_routes"
 import { UserRoutes } from "../routes/user_routes"
 import { CompanyRoutes } from "../routes/company_routes"
-
+require('dotenv/config');
 
 class App {
 
    public app: express.Application;
    
-   public mongoUrl: string = 'mongodb+srv://user:user@cluster0.9hbnr.mongodb.net/'+env.getDBName()+'?retryWrites=true&w=majority';
+   // public mongoUrl: string = 'mongodb+srv://user:user@cluster0.9hbnr.mongodb.net/'+env.getDBName()+'?retryWrites=true&w=majority';
+   public mongoUrl: string = process.env.DB_URL;
 
    private company_routes: CompanyRoutes = new CompanyRoutes();
    private user_routes: UserRoutes = new UserRoutes();
@@ -22,7 +24,6 @@ class App {
    constructor() {
       this.app = express();
       this.config();
-      console.log("mongoUrl: "+this.mongoUrl);
       this.mongoSetup();
       this.company_routes.route(this.app);
       this.user_routes.route(this.app);

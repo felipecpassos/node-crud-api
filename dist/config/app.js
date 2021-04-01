@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const environment_1 = require("../environment");
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
@@ -8,9 +7,11 @@ const test_routes_1 = require("../routes/test_routes");
 const common_routes_1 = require("../routes/common_routes");
 const user_routes_1 = require("../routes/user_routes");
 const company_routes_1 = require("../routes/company_routes");
+require('dotenv/config');
 class App {
     constructor() {
-        this.mongoUrl = 'mongodb+srv://user:user@cluster0.9hbnr.mongodb.net/' + environment_1.default.getDBName() + '?retryWrites=true&w=majority';
+        // public mongoUrl: string = 'mongodb+srv://user:user@cluster0.9hbnr.mongodb.net/'+env.getDBName()+'?retryWrites=true&w=majority';
+        this.mongoUrl = process.env.DB_URL;
         this.company_routes = new company_routes_1.CompanyRoutes();
         this.user_routes = new user_routes_1.UserRoutes();
         this.test_routes = new test_routes_1.TestRoutes();
