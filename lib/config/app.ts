@@ -13,7 +13,6 @@ class App {
 
    public app: express.Application;
    
-   // public mongoUrl: string = 'mongodb+srv://user:user@cluster0.9hbnr.mongodb.net/'+env.getDBName()+'?retryWrites=true&w=majority';
    public mongoUrl: string = process.env.DB_URL;
 
    private company_routes: CompanyRoutes = new CompanyRoutes();
