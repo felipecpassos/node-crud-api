@@ -116,6 +116,56 @@ export class CompanyController {
         }
     }
 
+    // 1 - Create request to add employee to company (Many-to-Many: User.employee_on <=> Company.personel)
+    public add_personel(req: Request, res: Response) {
+        if(req.body.user_id){
+            const company_filter = { _id: req.params.id };
+            // 1.1 - First add employee to the "personel" array of the company
+            this.company_service.filterCompany(company_filter, (err: any, company_data: ICompany) => {
+                if (err) {
+                    mongoError(err, res);
+                } else {
+                    // successResponse('get company successfull', company_data, res);
+                    console.log("get company : "+company_data);
+                    var mongoose = require('mongoose');
+                    var userObjectId = mongoose.Types.ObjectId(req.body.user_id);
+                    company_data.personel.push(userObjectId);
+                    this.company_service.updateCompany(company_data, (err: any) => {
+                        if (err) {
+                            mongoError(err, res);
+                        } else {
+                            //1.1 Succeeded
+                            // 1.2 - Then add the company on "employee_on" on the employee user array
+                            this.user_service.filterUser({_id: req.body.user_id}, (err: any, user_data: IUser) => {
+                                if (err) {
+                                    mongoError(err, res);
+                                } else {
+                                    console.log("get user : "+user_data);
+                                    // successResponse('get user successfull', user_data, res);
+                                    var mongoose = require('mongoose');
+                                    var companyObjectId = mongoose.Types.ObjectId(req.params.id);
+                                    user_data.employee_on.push(companyObjectId);
+                                    this.user_service.updateUser(user_data, (err: any) => {
+                                        if (err) {
+                                            mongoError(err, res);
+                                        } else {
+                                            // 1.2 Succeeded
+                                            successResponse('add personel successful', null, res);
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+        else{
+            // error response if some fields are missing in request body
+            insufficientParameters(res);
+        }
+    }
+
     public delete_company(req: Request, res: Response) {
         if (req.params.id) {
             //TODO DELETE COMPANY FROM USER FIRST

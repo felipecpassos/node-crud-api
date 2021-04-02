@@ -11,6 +11,7 @@ export interface IUser {
     phone_number: String;
     gender: String;
     companies?: [{ type: Schema.Types.ObjectId, ref: 'Company'}];
+    employee_on?: [{ type: Schema.Types.ObjectId, ref: 'Company'}];
     is_deleted?: Boolean;
     modification_notes: ModificationNote[]
 }
