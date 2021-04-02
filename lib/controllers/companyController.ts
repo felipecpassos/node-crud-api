@@ -134,7 +134,6 @@ export class CompanyController {
                             for (let i = 0; i < user_data.companies.length; i++){
                                 const company = user_data.companies[i];
                                 if (company.toString() === req.params.id){
-                                    console.log("bora poha");
                                     user_data.companies.splice(i--, 1);
                                 }
                             }
