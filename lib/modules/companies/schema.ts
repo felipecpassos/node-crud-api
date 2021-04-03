@@ -9,6 +9,7 @@ const schema = new Schema({
     company_email: String,
     phone_number: String,
     business_units: [{ type: Schema.Types.ObjectId, ref: 'Unit'}],
+    personel: [{ type: Schema.Types.ObjectId, ref: "User"}],
     is_deleted: {
         type: Boolean,
         default: false

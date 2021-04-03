@@ -14,6 +14,8 @@ const schema = new Schema({
     phone_number: String,
     gender: String,
     companies: [{ type: Schema.Types.ObjectId, ref: 'Company'}],
+    employee_on: [{ type: Schema.Types.ObjectId, ref: 'Company'}],
+    assets_responsable: [{ type: Schema.Types.ObjectId, ref: 'Assets'}],
     is_deleted: {
         type: Boolean,
         default: false

@@ -104,10 +104,10 @@ export class UnitController {
                     });
                     const unit_params: IUnit = {
                         _id: req.params.id,
-                        unit_name: req.body.unit_name,
-                        owner_company: req.body.owner_company,
-                        contact_email: req.body.contact_email,
-                        phone_number: req.body.phone_number,
+                        unit_name: req.body.unit_name? req.body.unit_name : unit_data.unit_name,
+                        owner_company: req.body.owner_company? req.body.owner_company : unit_data.owner_company,
+                        contact_email: req.body.contact_email? req.body.contact_email : unit_data.contact_email,
+                        phone_number: req.body.phone_number? req.body.phone_number : unit_data.phone_number,
                         is_deleted: req.body.is_deleted ? req.body.is_deleted : unit_data.is_deleted,
                         modification_notes: unit_data.modification_notes
                     };

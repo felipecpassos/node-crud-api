@@ -116,6 +116,56 @@ export class CompanyController {
         }
     }
 
+    // 1 - Create request to add employee to company (Many-to-Many: User.employee_on <=> Company.personel)
+    public add_personel(req: Request, res: Response) {
+        if(req.body.user_id){
+            const company_filter = { _id: req.params.id };
+            // 1.1 - First add employee to the "personel" array of the company
+            this.company_service.filterCompany(company_filter, (err: any, company_data: ICompany) => {
+                if (err) {
+                    mongoError(err, res);
+                } else {
+                    // successResponse('get company successfull', company_data, res);
+                    console.log("get company : "+company_data);
+                    var mongoose = require('mongoose');
+                    var userObjectId = mongoose.Types.ObjectId(req.body.user_id);
+                    company_data.personel.push(userObjectId);
+                    this.company_service.updateCompany(company_data, (err: any) => {
+                        if (err) {
+                            mongoError(err, res);
+                        } else {
+                            //1.1 Succeeded
+                            // 1.2 - Then add the company on "employee_on" on the employee user array
+                            this.user_service.filterUser({_id: req.body.user_id}, (err: any, user_data: IUser) => {
+                                if (err) {
+                                    mongoError(err, res);
+                                } else {
+                                    console.log("get user : "+user_data);
+                                    // successResponse('get user successfull', user_data, res);
+                                    var mongoose = require('mongoose');
+                                    var companyObjectId = mongoose.Types.ObjectId(req.params.id);
+                                    user_data.employee_on.push(companyObjectId);
+                                    this.user_service.updateUser(user_data, (err: any) => {
+                                        if (err) {
+                                            mongoError(err, res);
+                                        } else {
+                                            // 1.2 Succeeded
+                                            successResponse('add personel successful', null, res);
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+        else{
+            // error response if some fields are missing in request body
+            insufficientParameters(res);
+        }
+    }
+
     public delete_company(req: Request, res: Response) {
         if (req.params.id) {
             //TODO DELETE COMPANY FROM USER FIRST
@@ -134,7 +184,6 @@ export class CompanyController {
                             for (let i = 0; i < user_data.companies.length; i++){
                                 const company = user_data.companies[i];
                                 if (company.toString() === req.params.id){
-                                    console.log("bora poha");
                                     user_data.companies.splice(i--, 1);
                                 }
                             }
@@ -152,6 +201,61 @@ export class CompanyController {
                                             successResponse('delete company successfull', null, res);
                                         } else {
                                             failureResponse('invalid company', null, res);
+                                        }
+                                    });
+                                    
+                                }
+                            });
+                            
+                            
+                        }
+                    });
+                }
+            });
+        } else {
+            insufficientParameters(res);
+        }
+        
+    }
+
+    public delete_company_personel(req: Request, res: Response) {
+        if (req.params.id && req.body.employee_id) {
+            //TODO DELETE COMPANY FROM USER FIRST
+            this.company_service.filterCompany({_id: req.params.id}, (err: any, company_data: ICompany) => {
+                if (err) {
+                    mongoError(err, res);
+                } else {
+                    this.user_service.filterUser({_id: req.body.employee_id}, (err: any, user_data: IUser) => {
+                        if (err) {
+                            mongoError(err, res);
+                        } else {
+                            // successResponse('get user successfull', user_data, res);
+                            // console.log("get user : "+[user_data.companies]);
+                            //REMOVE COMPANY FROM EMPLOYEE ARRAY ON USER OBJECT
+                            for (let i = 0; i < user_data.employee_on.length; i++){
+                                const company = user_data.employee_on[i];
+                                if (company.toString() === req.params.id){
+                                    user_data.employee_on.splice(i--, 1);
+                                }
+                            }
+                            console.log("Deleted company from user company array: "+[user_data.employee_on]);
+                            this.user_service.updateUser(user_data, (err: any) => {
+                                if (err) {
+                                    mongoError(err, res);
+                                } else {
+                                    // successResponse('update user successfull', null, res);
+                                    //Finally, delete from the company itself
+                                    for (let i = 0; i < company_data.personel.length; i++){
+                                        const employee = company_data.personel[i];
+                                        if (employee.toString() === req.body.employee_id){
+                                            company_data.personel.splice(i--, 1);
+                                        }
+                                    }
+                                    this.company_service.updateCompany(company_data, (err: any) => {
+                                        if (err) {
+                                            mongoError(err, res);
+                                        } else {
+                                            successResponse('update company personel successfull', null, res);
                                         }
                                     });
                                     

@@ -7,6 +7,8 @@ import { CommonRoutes } from "../routes/common_routes"
 import { UserRoutes } from "../routes/user_routes"
 import { CompanyRoutes } from "../routes/company_routes"
 import { UnitRoutes } from "../routes/unit_routes"
+import { AssetRoutes } from "../routes/asset_routes"
+
 require('dotenv/config');
 
 class App {
@@ -15,6 +17,7 @@ class App {
    
    public mongoUrl: string = process.env.DB_URL;
 
+   private asset_routes: AssetRoutes = new AssetRoutes();
    private unit_routes: UnitRoutes = new UnitRoutes();
    private company_routes: CompanyRoutes = new CompanyRoutes();
    private user_routes: UserRoutes = new UserRoutes();
@@ -25,8 +28,9 @@ class App {
       this.app = express();
       this.config();
       this.mongoSetup();
-      this.unit_routes.route(this.app);
+      this.asset_routes.route(this.app);
       this.company_routes.route(this.app);
+      this.unit_routes.route(this.app);
       this.user_routes.route(this.app);
       this.test_routes.route(this.app);
       this.common_routes.route(this.app); //always keep common_routes last

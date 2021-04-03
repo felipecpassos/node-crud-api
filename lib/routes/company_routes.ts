@@ -19,8 +19,17 @@ export class CompanyRoutes {
             this.company_controller.update_company(req, res);
         });
 
+        app.put('/api/company-personel/:id', (req: Request, res: Response) => {
+            // this.company_controller.update_company(req, res);
+            this.company_controller.add_personel(req, res);
+        });
+
         app.delete('/api/company/:id', (req: Request, res: Response) => {
             this.company_controller.delete_company(req, res);
+        });
+
+        app.delete('/api/company-personel/:id', (req: Request, res: Response) => {
+            this.company_controller.delete_company_personel(req, res);
         });
 
     }

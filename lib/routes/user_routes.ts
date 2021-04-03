@@ -5,8 +5,9 @@ export class UserRoutes {
 
     private user_controller: UserController = new UserController();
 
+
     public route(app: Application) {
-        
+
         app.post('/api/user', (req: Request, res: Response) => {
             this.user_controller.create_user(req, res);
         });
