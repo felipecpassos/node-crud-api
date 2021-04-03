@@ -6,15 +6,11 @@ export interface IAsset {
     name: String;
     description: String;
     model: String;
+    serial_number: String;
     unit: { type: Schema.Types.ObjectId, ref: 'Unit' };
     responsable: { type: Schema.Types.ObjectId, ref: 'User'};
     status?: String;
-    health?: {
-        type: Number,
-        default: 100,
-        min: 0,
-        max: 100
-    };
+    health?: Number;
     is_deleted?: Boolean;
     modification_notes: ModificationNote[]
 }

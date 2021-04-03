@@ -7,6 +7,7 @@ const schema = new Schema({
     name: String,
     description: String,
     model: String,
+    serial_number: String,
     unit: { type: Schema.Types.ObjectId, ref: 'Unit' },
     responsable: { type: Schema.Types.ObjectId, ref: 'User'},
     status: {

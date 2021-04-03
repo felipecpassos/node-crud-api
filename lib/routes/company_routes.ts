@@ -28,5 +28,9 @@ export class CompanyRoutes {
             this.company_controller.delete_company(req, res);
         });
 
+        app.delete('/api/company-personel/:id', (req: Request, res: Response) => {
+            this.company_controller.delete_company_personel(req, res);
+        });
+
     }
 }

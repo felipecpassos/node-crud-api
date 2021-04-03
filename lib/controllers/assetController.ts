@@ -19,12 +19,14 @@ export class AssetController {
         if (req.body.name &&
             req.body.description && 
             req.body.model &&
+            req.body.serial_number &&
             req.body.unit &&
             req.body.responsable){
             const asset_params: IAsset = {
                 name: req.body.name,
                 description: req.body.description,
                 model: req.body.model,
+                serial_number: req.body.serial_number,
                 unit: req.body.unit,
                 responsable: req.body.responsable,
                 modification_notes: [{
@@ -144,6 +146,7 @@ export class AssetController {
             req.body.name ||
             req.body.description ||
             req.body.model ||
+            req.body.serial_number ||
             req.body.unit ||
             req.body.responsable||
             req.body.health) {
@@ -159,10 +162,10 @@ export class AssetController {
                     });
 
                     //setting status
-                    if (req.body.health<=50){
+                    if (req.body.health <= 50){
                         asset_data.status = 'Em Alerta';
                     }
-                    else if (req.body.health === 0){
+                    else if (req.body.health <= 1){
                         asset_data.status = 'Em parada';
                     }
                     else{
@@ -174,6 +177,7 @@ export class AssetController {
                         name: req.body.name? req.body.name : asset_data.name,
                         description: req.body.description? req.body.description : asset_data.description,
                         model: req.body.model? req.body.model : asset_data.model,
+                        serial_number: req.body.serial_number? req.body.serial_number : asset_data.serial_number,
                         unit: req.body.unit? req.body.unit : asset_data.unit,
                         responsable: req.body.responsable? req.body.responsable : asset_data.responsable,
                         health: req.body.health? req.body.health : asset_data.health,
@@ -222,12 +226,14 @@ export class AssetController {
                                 console.log("Deleted asset from unit asset array: "+[unit_data.assets]);
                                 this.unit_service.updateUnit(unit_data, (err: any) => {
                                     if (err) {
+                                        console.log("aqui?");
                                         mongoError(err, res);
                                     } else {
                                         // successResponse('update unit successfull', null, res);
                                         // NOW REMOVE ASSET FROM ASSETS ARRAY ON USER OBJECT
                                         this.user_service.filterUser({_id: asset_data.responsable}, (err: any, user_data: IUser) => {
                                             if (err) {
+                                                console.log("aqui 2?");
                                                 mongoError(err, res);
                                             } else {
                                                 // successResponse('get user successfull', user_data, res);
@@ -239,17 +245,40 @@ export class AssetController {
                                                 }
                                                 this.user_service.updateUser(user_data, (err: any) => {
                                                     if (err) {
+                                                        console.log("aqui 3?");
                                                         mongoError(err, res);
                                                     } else {
                                                         // successResponse('update user successfull', null, res);
-                                                        // Finally, delete the unit itself
-                                                        this.asset_service.deleteAsset(req.params.id, (err: any, delete_details) => {
+                                                        // Get the asset in order to delete the asset image
+                                                        this.asset_service.filterAsset({_id: req.params.id}, (err: any, asset_data: IAsset) => {
                                                             if (err) {
+                                                                console.log("aqui 4?");
                                                                 mongoError(err, res);
-                                                            } else if (delete_details.deletedCount !== 0) {
-                                                                successResponse('delete asset successfull', null, res);
                                                             } else {
-                                                                failureResponse('invalid asset', null, res);
+                                                                // successResponse('ge asset successfull', asset_data, res);
+                                                                // Finally, delete the asset itself
+                                                                this.asset_service.deleteAsset(req.params.id, (err: any, delete_details) => {
+                                                                    if (err) {
+                                                                        console.log("aqui 5?");
+                                                                        mongoError(err, res);
+                                                                    } else if (delete_details.deletedCount !== 0) {
+                                                                        //DELETING FROM THE FILE SYSTEM
+                                                                        const fs = require('fs');
+                                                                        const path = 'images/assets/'+asset_data.serial_number+'.jpg';
+                                                                        try {
+                                                                            fs.unlinkSync(path)
+                                                                            //file removed
+                                                                        } catch(err) {
+                                                                            console.error(err)
+                                                                        }
+                                                                        if (!err)
+                                                                            successResponse('delete asset successfull', null, res);
+                                                                        else
+                                                                            failureResponse('asset removed from db, but image file failed to be deleted', null, res);
+                                                                    } else {
+                                                                        failureResponse('invalid asset', null, res);
+                                                                    }
+                                                                });
                                                             }
                                                         });
                                                     }

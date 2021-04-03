@@ -6,8 +6,19 @@ export class AssetRoutes {
     private asset_controller: AssetController = new AssetController();
 
     public route(app: Application) {
+
+        const multer = require('multer');
+        const storage = multer.diskStorage({
+            destination: (req, file, callback) => {
+                callback(null, 'images/assets');
+            },
+            filename: (req, file, callback) => {
+                callback(null, req.body.serial_number+'.jpg');
+            }
+        });
+        const upload = multer({ storage });
         
-        app.post('/api/asset', (req: Request, res: Response) => {
+        app.post('/api/asset', upload.single('img'), (req: Request, res: Response) => {
             this.asset_controller.create_asset(req, res);
         });
 
