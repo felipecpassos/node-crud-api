@@ -159,20 +159,29 @@ export class AssetController {
                     });
 
                     //setting status
-                    asset_data
+                    if (req.body.health<=50){
+                        asset_data.status = 'Em Alerta';
+                    }
+                    else if (req.body.health === 0){
+                        asset_data.status = 'Em parada';
+                    }
+                    else{
+                        asset_data.status = 'Em operação';
+                    }
 
                     const asset_params: IAsset = {
                         _id: req.params.id,
-                        name: req.body.name,
-                        description: req.body.description,
-                        model: req.body.model,
-                        unit: req.body.unit,
-                        responsable: req.body.responsable,
-                        health: req.body.health,
-
+                        name: req.body.name? req.body.name : asset_data.name,
+                        description: req.body.description? req.body.description : asset_data.description,
+                        model: req.body.model? req.body.model : asset_data.model,
+                        unit: req.body.unit? req.body.unit : asset_data.unit,
+                        responsable: req.body.responsable? req.body.responsable : asset_data.responsable,
+                        health: req.body.health? req.body.health : asset_data.health,
+                        status: asset_data.status,
                         modification_notes: asset_data.modification_notes
                     };
                     this.asset_service.updateAsset(asset_params, (err: any) => {
+                    
                         if (err) {
                             mongoError(err, res);
                         } else {

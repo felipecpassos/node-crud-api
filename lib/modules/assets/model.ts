@@ -8,10 +8,7 @@ export interface IAsset {
     model: String;
     unit: { type: Schema.Types.ObjectId, ref: 'Unit' };
     responsable: { type: Schema.Types.ObjectId, ref: 'User'};
-    status?: {
-        type: String,
-        default: "Em operação"
-    };
+    status?: String;
     health?: {
         type: Number,
         default: 100,
