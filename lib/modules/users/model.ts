@@ -12,6 +12,7 @@ export interface IUser {
     gender: String;
     companies?: [{ type: Schema.Types.ObjectId, ref: 'Company'}];
     employee_on?: [{ type: Schema.Types.ObjectId, ref: 'Company'}];
+    assets_responsable?: [{ type: Schema.Types.ObjectId, ref: 'Assets'}];
     is_deleted?: Boolean;
     modification_notes: ModificationNote[]
 }

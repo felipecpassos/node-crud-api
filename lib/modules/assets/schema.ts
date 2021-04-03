@@ -4,11 +4,21 @@ import { ModificationNote } from '../common/model';
 const Schema = mongoose.Schema;
 
 const schema = new Schema({
-    unit_name: String,
-    owner_company: { type: Schema.Types.ObjectId, ref: 'Company'},
-    contact_email: String,
-    phone_number: String,
-    // TODO ADD LIST OF ASSETS
+    name: String,
+    description: String,
+    model: String,
+    unit: { type: Schema.Types.ObjectId, ref: 'Unit' },
+    responsable: { type: Schema.Types.ObjectId, ref: 'User'},
+    status: {
+        type: String,
+        default: "Em operação"
+    },
+    health: {
+        type: Number,
+        default: 100,
+        min: 0,
+        max: 100
+    },
     is_deleted: {
         type: Boolean,
         default: false
@@ -16,4 +26,4 @@ const schema = new Schema({
     modification_notes: [ModificationNote]
 });
 
-export default mongoose.model('units', schema);
+export default mongoose.model('assets', schema);

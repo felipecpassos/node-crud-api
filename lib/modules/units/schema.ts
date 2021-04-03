@@ -8,7 +8,7 @@ const schema = new Schema({
     owner_company: { type: Schema.Types.ObjectId, ref: 'Company'},
     contact_email: String,
     phone_number: String,
-    // TODO ADD LIST OF ASSETS
+    assets: [{ type: Schema.Types.ObjectId, ref:'Asset'}],
     is_deleted: {
         type: Boolean,
         default: false

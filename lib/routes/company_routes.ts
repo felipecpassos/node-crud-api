@@ -19,7 +19,8 @@ export class CompanyRoutes {
             this.company_controller.update_company(req, res);
         });
 
-        app.put('api/company/:id/personel', (req: Request, res: Response) => {
+        app.put('/api/company-personel/:id', (req: Request, res: Response) => {
+            // this.company_controller.update_company(req, res);
             this.company_controller.add_personel(req, res);
         });
 
