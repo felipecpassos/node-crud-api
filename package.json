@@ -16,8 +16,9 @@
     "dotenv": "^8.2.0",
     "ejs": "^3.1.6",
     "express": "^4.17.1",
+    "heroku": "^7.51.0",
     "mongodb": "^3.6.5",
-    "mongoose": "^5.12.2",
+    "mongoose": "^5.12.3",
     "multer": "^1.4.2"
   },
   "devDependencies": {
